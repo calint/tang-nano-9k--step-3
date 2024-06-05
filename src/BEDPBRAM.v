@@ -26,33 +26,32 @@ module BEDPBRAM #(
     input wire [DATA_BITWIDTH-1:0] b_data_in
 );
 
-  reg [DATA_BITWIDTH-1:0] a_data[2**ADDRESS_BITWIDTH-1:0];
-  reg [DATA_BITWIDTH-1:0] b_data[2**ADDRESS_BITWIDTH-1:0];
+  reg [DATA_BITWIDTH-1:0] data[2**ADDRESS_BITWIDTH-1:0];
 
   integer i;
 
   always @(posedge a_clk) begin
     for (i = 0; i < 4; i = i + 1) begin
       if (a_write_enable[i]) begin
-        a_data[a_address][
+        data[a_address][
           (i+1)*DATA_COLUMN_BITWIDTH-1
           -:DATA_COLUMN_BITWIDTH
         ] <= a_data_in[(i+1)*DATA_COLUMN_BITWIDTH-1-:DATA_COLUMN_BITWIDTH];
       end
     end
-    a_data_out <= a_data[a_address];
+    a_data_out <= data[a_address];
   end
 
   always @(posedge b_clk) begin
     for (i = 0; i < 4; i = i + 1) begin
       if (b_write_enable[i]) begin
-        b_data[b_address][
+        data[b_address][
           (i+1)*DATA_COLUMN_BITWIDTH-1
           -:DATA_COLUMN_BITWIDTH
         ] <= b_data_in[(i+1)*DATA_COLUMN_BITWIDTH-1-:DATA_COLUMN_BITWIDTH];
       end
     end
-    b_data_out <= b_data[b_address];
+    b_data_out <= data[b_address];
   end
 
 endmodule
