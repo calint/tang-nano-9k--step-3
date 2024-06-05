@@ -11,16 +11,20 @@ module Top (
     input wire btn1
 );
 
-  BEDPBRAM #(
-      .ADDRESS_BITWIDTH(16),
+  BEDPBRAM2 #(
+      .ADDRESS_BITWIDTH(10),
       .DATA_BITWIDTH(32),
       .DATA_COLUMN_BITWIDTH(8)
   ) data (
-      .a_clk(sys_clk),
+      .clk(sys_clk),
+      
       .a_write_enable(a_write_enable),
       .a_address(a_address),
       .a_data_in(a_data_in),
-      .a_data_out(a_data_out)
+      .a_data_out(a_data_out),
+
+      .b_address(b_address),
+      .b_data_out(b_data_out)
   );
 
   reg  [ 3:0] a_write_enable;
@@ -40,8 +44,8 @@ module Top (
       0: begin
         a_write_enable <= {0, 0, 0, 1};
         a_data_in <= 32'habcd_ef12;
-        b_write_enable <= {0, 0, 0, 1};
-        b_data_in <= 32'habcd_ef12;
+        // b_write_enable <= {0, 0, 0, 1};
+        // b_data_in <= 32'habcd_ef12;
         state <= 1;
       end
       1: begin
@@ -49,13 +53,13 @@ module Top (
       end
       2: begin
         a_write_enable <= 0;
-        b_write_enable <= 0;
+        // b_write_enable <= 0;
         state <= 3;
       end
       3: begin
         led[2:0] <= a_data_out[2:0];
+        led[5:3] <= b_data_out[5:3];
         a_address <= a_address + 1;
-        led[5:3] <= b_data_out[2:0];
         b_address <= b_address + 1;
         state <= 0;
       end
